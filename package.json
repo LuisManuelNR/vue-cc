@@ -1,0 +1,25 @@
+{
+  "name": "vue-chart2d-constructor",
+  "version": "1.0.1",
+  "description": "Build charts in a modular way with vue",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LuisManuelNR/vue-chart2d-constructor.git"
+  },
+  "keywords": [
+    "vue",
+    "chart",
+    "svg",
+    "modular"
+  ],
+  "author": "Luis Manuel Noguerol Ramírez (https://chazycub.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LuisManuelNR/vue-chart2d-constructor/issues"
+  },
+  "homepage": "https://github.com/LuisManuelNR/vue-chart2d-constructor#readme"
+}
