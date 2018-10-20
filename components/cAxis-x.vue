@@ -50,13 +50,11 @@ export default {
         const minX = this.range ? this.range[0] : this.$utils.getMin(this.dataset, this.x)
         const maxX = this.range ? this.range[1] : this.$utils.getMax(this.dataset, this.x)
         let list = []
-        for (let i = 0; i < this.dataset.length; i++) {
-          list.push({
-            position: this.$utils.scale(this.dataset[i][this.x], minX, maxX, this.width)
-          })
-        }
         for (let i = 0; i < this.dataset.length; i += Math.round(this.dataset.length / this.ticks)) {
-          list[i].value = this.dataset[i][this.x]
+          list.push({
+            position: this.$utils.scale(this.dataset[i][this.x], minX, maxX, this.width),
+            value: this.dataset[i][this.x]
+          })
         }
         return list.reverse()
       }

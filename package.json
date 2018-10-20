@@ -21,5 +21,15 @@
   "bugs": {
     "url": "https://github.com/LuisManuelNR/vue-chart2d-constructor/issues"
   },
-  "homepage": "https://github.com/LuisManuelNR/vue-chart2d-constructor#readme"
+  "homepage": "https://github.com/LuisManuelNR/vue-chart2d-constructor#readme",
+  "devDependencies": {
+    "eslint": "^5.6.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-friendly-formatter": "^4.0.1",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-html": "^4.0.6",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0"
+  }
 }

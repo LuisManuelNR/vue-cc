@@ -63,13 +63,15 @@ export default {
         let xPoints = []
         let yPoints = []
         for (let i = 0; i < this.dataset.length; i++) {
-          xPoints.push(this.$utils.scale(this.dataset[i][this.x], minX, maxX, this.width))
-          yPoints.push(this.$utils.scale(this.dataset[i][this.y], minY, maxY, this.height, true))
+          const pX = this.$utils.scale(this.dataset[i][this.x], minX, maxX, this.width)
+          const pY = this.$utils.scale(this.dataset[i][this.y], minY, maxY, this.height, true)
+          xPoints.push(pX)
+          yPoints.push(pY)
         }
         xPoints.reverse()
         yPoints.reverse()
         let list = `M${xPoints[0]} ${yPoints[0]}`
-        for (let i = 1; i < this.dataset.length; i++) {
+        for (let i = 1; i < xPoints.length; i++) {
           list += ` L${xPoints[i]} ${yPoints[i]} `
         }
         return list
