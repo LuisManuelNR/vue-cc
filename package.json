@@ -1,10 +1,6 @@
 {
   "name": "vue-chart2d-constructor",
-<<<<<<< HEAD
   "version": "1.0.9",
-=======
-  "version": "1.0.16",
->>>>>>> 3503fcb7f7583978f25f58fab9bddda1620e24fb
   "description": "Build charts in a modular way with vue",
   "main": "index.js",
   "scripts": {
