@@ -1,8 +1,8 @@
 <template>
   <g
   text-anchor="middle"
-  fill="white"
-  stroke="white"
+  :fill="strokeColor"
+  :stroke="strokeColor"
   stroke-width="1"
   :transform="`translate(0, ${height})`">
     <line v-if="ticksList && ticksList.length > 0" :x1="ticksList[0].position" :x2="ticksList[ticksList.length - 1].position"></line>
@@ -42,6 +42,10 @@ export default {
     },
     label: {
       type: String
+    },
+    strokeColor: {
+      type: String,
+      default: 'white'
     }
   },
   computed: {

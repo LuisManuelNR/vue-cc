@@ -1,8 +1,8 @@
 <template>
   <g
   text-anchor="end"
-  fill="white"
-  stroke="white"
+  :fill="strokeColor"
+  :stroke="strokeColor"
   stroke-width="1">
     <line :y1="height"></line>
     <g v-for="(tick, i) in ticksList" :key="'tick' + i"
@@ -34,6 +34,10 @@ export default {
     },
     fixed: {
       type: Number
+    },
+    strokeColor: {
+      type: String,
+      default: 'white'
     }
   },
   computed: {
