@@ -6,7 +6,7 @@
     stroke-linecap="round"
     :stroke-width="strokeWidth"
     :stroke-dasharray="dasharray"
-    :d="points"
+    :d="pointsResult"
     ></path>
 </template>
 
@@ -14,18 +14,7 @@
 export default {
   name: 'cPath',
   props: {
-    dataset: {
-      type: Array,
-      required: true
-    },
-    y: {
-      type: String,
-      required: true
-    },
-    x: {
-      type: String,
-      required: true
-    },
+    points: Array,
     height: {
       type: Number,
       required: true
@@ -46,25 +35,21 @@ export default {
       type: String,
       default: ''
     },
-    rangeY: {
-      type: Array
-    },
-    rangeX: {
-      type: Array
-    }
+    rangeY: Array,
+    rangeX: Array
   },
   computed: {
-    points () {
-      if (this.dataset && this.dataset.length > 0) {
-        const minY = this.rangeY ? this.rangeY[0] : this.$utils.getMin(this.dataset, this.y)
-        const maxY = this.rangeY ? this.rangeY[1] : this.$utils.getMax(this.dataset, this.y)
-        const minX = this.rangeX ? this.rangeX[0] : this.$utils.getMin(this.dataset, this.x)
-        const maxX = this.rangeX ? this.rangeX[1] : this.$utils.getMax(this.dataset, this.x)
+    pointsResult () {
+      if (this.points && this.points.length > 0) {
+        const minY = this.rangeY ? this.rangeY[0] : this.$utils.getMin(this.points)
+        const maxY = this.rangeY ? this.rangeY[1] : this.$utils.getMax(this.points)
+        const minX = this.rangeX ? this.rangeX[0] : this.$utils.getMin(this.points)
+        const maxX = this.rangeX ? this.rangeX[1] : this.$utils.getMax(this.points)
         let xPoints = []
         let yPoints = []
-        for (let i = 0; i < this.dataset.length; i++) {
-          const pX = this.$utils.scale(this.dataset[i][this.x], minX, maxX, this.width)
-          const pY = this.$utils.scale(this.dataset[i][this.y], minY, maxY, this.height, true)
+        for (let i = 0; i < this.points.length; i++) {
+          const pX = this.$utils.scale(i, minX, maxX, this.width)
+          const pY = this.$utils.scale(this.points[i], minY, maxY, this.height, true)
           xPoints.push(pX)
           yPoints.push(pY)
         }
