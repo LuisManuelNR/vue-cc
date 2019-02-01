@@ -15,7 +15,7 @@ export default {
       default: 500
     },
     marginLeft: {
-      type: Number,
+      type: [Number, String],
       default: 40
     },
     marginTop: {

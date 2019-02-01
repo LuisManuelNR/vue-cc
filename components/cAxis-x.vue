@@ -51,7 +51,7 @@ export default {
         let i = 0
         while (loop && i < this.xPoints.length) {
           const pos = this.$cChart.scale(i, minX, maxX, this.width)
-          const val = this.xPoints[i].toPrecision(4)
+          const val = this.byValue ? this.xPoints[i].toPrecision(4) : i
           list.push({
             position: pos,
             value: val

@@ -6,9 +6,9 @@
   stroke-width="1">
     <line :y1="height"></line>
     <g v-for="(tick, i) in ticksList" :key="'tick' + i"
-    :transform="`translate(0, ${i * (height/(ticksList.length - 1))})`">
+    :transform="`translate(0, ${tick.pos})`">
       <line x2="-6"></line>
-      <text stroke-width="0.1" x="-9" dy="0.32em">{{tick}}</text>
+      <text stroke-width="0.1" x="-9" dy="0.32em">{{tick.val}}</text>
     </g>
     <text transform="rotate(-90)" y="6" dy="0.71em" stroke-width="0.1">{{label}}</text>
   </g>
@@ -18,23 +18,16 @@
 export default {
   name: 'cAxisY',
   props: {
-    range: {
+    yPoints: {
       type: Array,
       required: true
     },
     ticks: {
-      type: Number
+      type: [Number, String],
+      default: 6
     },
-    height: {
-      type: Number,
-      required: true
-    },
-    label: {
-      type: String
-    },
-    fixed: {
-      type: Number
-    },
+    label: String,
+    maxDigit: [Number, String],
     strokeColor: {
       type: String,
       default: 'white'
@@ -42,18 +35,30 @@ export default {
   },
   computed: {
     ticksList () {
-      if (this.range && this.range.length > 0) {
+      if (this.yPoints && this.yPoints.length > 0) {
         let list = []
-        const min = this.range[0]
-        const max = this.range[1]
+        const min = this.$cChart.getMin(this.yPoints)
+        const max = this.$cChart.getMax(this.yPoints)
         const d = (max - min) / (this.ticks - 1)
         let o = min
-        list.push(this.fixed ? o.toFixed(this.fixed) : o)
+        list.push({
+          val: this.maxDigit ? o.toPrecision(this.maxDigit) : o,
+          pos: this.ticks * (this.height / this.ticks)
+        })
         for (let i = 1; i < this.ticks; i++) {
-          list.push(this.fixed ? (o += d).toFixed(this.fixed) : (o += d))
+          list.push({
+            val: this.maxDigit ? (o += d).toPrecision(this.maxDigit) : (o += d),
+            pos: (this.ticks - i) * (this.height / (this.ticks + 5))
+          })
         }
-        return list.reverse()
+        return list
       }
+    },
+    requiredProps () {
+      return this.yPoints && this.yPoints.length > 0 && this.height
+    },
+    height () {
+      return this.$parent.containerHeight
     }
   }
 }
