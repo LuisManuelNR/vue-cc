@@ -39,16 +39,16 @@ export default {
         let list = []
         const min = this.$cChart.getMin(this.yPoints)
         const max = this.$cChart.getMax(this.yPoints)
-        const d = (max - min) / (this.ticks - 1)
+        const d = (max - min) / (this.ticks)
         let o = min
         list.push({
           val: this.maxDigit ? o.toPrecision(this.maxDigit) : o,
           pos: this.ticks * (this.height / this.ticks)
         })
-        for (let i = 1; i < this.ticks; i++) {
+        for (let i = 1; i <= this.ticks; i++) {
           list.push({
             val: this.maxDigit ? (o += d).toPrecision(this.maxDigit) : (o += d),
-            pos: (this.ticks - i) * (this.height / (this.ticks + 5))
+            pos: (this.ticks - i) * (this.height / this.ticks)
           })
         }
         return list

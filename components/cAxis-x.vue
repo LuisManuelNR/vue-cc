@@ -10,7 +10,7 @@
       <line y2="6"></line>
       <text text-anchor="middle" stroke-width="0.1" y="9" dy="0.71em">{{tick.value}}</text>
     </g>
-    <text text-anchor="left" :x="ticksList[0].position" y="-25" dx="-0.71em" dy="0.71em" stroke-width="0.1">{{label}}</text>
+    <text text-anchor="left" x="0" y="-25" dx="1em" dy="0.71em" stroke-width="0.1">{{label}}</text>
   </g>
 </template>
 
@@ -57,7 +57,7 @@ export default {
             value: val
           })
           i += Math.round(this.xPoints.length / this.ticks)
-          if (pos > this.width) loop = false
+          if (pos >= this.width) loop = false
         }
         return list
       }
