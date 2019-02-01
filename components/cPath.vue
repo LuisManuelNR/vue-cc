@@ -43,13 +43,24 @@ export default {
         const maxX = this.xRange ? this.xRange[1] : this.xPoints ? this.$cChart.getMax(this.xPoints) : this.yPoints.length
         let xPoints = []
         let yPoints = []
-        for (let i = 0; i < this.yPoints.length; i++) {
+        let loop = true
+        let i = 0
+        while (loop && i < this.yPoints.length) {
           const x = this.xPoints ? this.xPoints[i] : i
           const pX = this.$cChart.scale(x, minX, maxX, this.width)
           const pY = this.$cChart.scale(this.yPoints[i], minY, maxY, this.height, true)
           xPoints.push(pX)
           yPoints.push(pY)
+          i++
+          if (pX >= this.width) loop = false
         }
+        // for (let i = 0; i < this.yPoints.length; i++) {
+        //   const x = this.xPoints ? this.xPoints[i] : i
+        //   const pX = this.$cChart.scale(x, minX, maxX, this.width)
+        //   const pY = this.$cChart.scale(this.yPoints[i], minY, maxY, this.height, true)
+        //   xPoints.push(pX)
+        //   yPoints.push(pY)
+        // }
         xPoints.reverse()
         yPoints.reverse()
         let list = `M${xPoints[0]} ${yPoints[0]}`
