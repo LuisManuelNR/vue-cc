@@ -1,6 +1,5 @@
 <template>
   <g
-  text-anchor="middle"
   :fill="strokeColor"
   :stroke="strokeColor"
   stroke-width="1"
@@ -9,9 +8,9 @@
     <g v-for="(tick, i) in ticksList" :key="'tick' + i"
     :transform="`translate(${tick.position}, 0)`">
       <line y2="6"></line>
-      <text stroke-width="0.1" y="9" dy="0.71em">{{tick.value}}</text>
+      <text text-anchor="middle" stroke-width="0.1" y="9" dy="0.71em">{{tick.value}}</text>
     </g>
-    <text :x="ticksList[0].position" y="-25" dx="-0.71em" dy="0.71em" stroke-width="0.1">{{label}}</text>
+    <text text-anchor="left" :x="ticksList[0].position" y="-25" dx="-0.71em" dy="0.71em" stroke-width="0.1">{{label}}</text>
   </g>
 </template>
 
@@ -19,26 +18,20 @@
 export default {
   name: 'cAxisX',
   props: {
-    dataset: {
+    xPoints: {
       type: Array,
       required: true
     },
-    range: {
+    xRange: {
       type: Array
     },
-    x: {
-      type: String
+    byValue: {
+      type: Boolean,
+      default: false
     },
     ticks: {
-      type: Number
-    },
-    height: {
       type: Number,
-      required: true
-    },
-    width: {
-      type: Number,
-      required: true
+      default: 6
     },
     label: {
       type: String
@@ -50,18 +43,27 @@ export default {
   },
   computed: {
     ticksList () {
-      if (this.dataset && this.dataset.length > 0) {
-        const minX = this.range ? this.range[0] : this.$utils.getMin(this.dataset, this.x)
-        const maxX = this.range ? this.range[1] : this.$utils.getMax(this.dataset, this.x)
+      if (this.requiredProps) {
+        const minX = this.xRange ? this.xRange[0] : this.byValue ? this.$cChart.getMin(this.xPoints) : 0
+        const maxX = this.xRange ? this.xRange[1] : this.byValue ? this.$cChart.getMax(this.xPoints) : this.xPoints.length
         let list = []
-        for (let i = 0; i < this.dataset.length; i += Math.round(this.dataset.length / this.ticks)) {
+        for (let i = 0; i < this.xPoints.length; i += Math.round(this.xPoints.length / this.ticks) ) {
           list.push({
-            position: this.$utils.scale(this.dataset[i][this.x], minX, maxX, this.width),
-            value: this.dataset[i][this.x]
+            position: this.$cChart.scale(i, minX, maxX, this.width),
+            value: this.xPoints[i].toPrecision(4)
           })
         }
-        return list.reverse()
+        return list
       }
+    },
+    requiredProps () {
+      return this.xPoints && this.xPoints.length > 0 && this.width && this.height
+    },
+    width () {
+      return this.$parent.containerWidth
+    },
+    height () {
+      return this.$parent.containerHeight
     }
   }
 }

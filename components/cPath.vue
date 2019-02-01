@@ -14,19 +14,11 @@
 export default {
   name: 'cPath',
   props: {
-    hPoints: {
+    yPoints: {
       type: Array,
       required: true
     },
-    vPoints: Array,
-    height: {
-      type: [Number, String],
-      required: true
-    },
-    width: {
-      type: [Number, String],
-      required: true
-    },
+    xPoints: Array,
     color: {
       type: String,
       default: 'steelblue'
@@ -39,22 +31,22 @@ export default {
       type: String,
       default: ''
     },
-    rangeY: Array,
-    rangeX: Array
+    yRange: Array,
+    xRange: Array
   },
   computed: {
     pointsResult () {
-      if (this.hPoints && this.hPoints.length > 0) {
-        const minY = this.rangeY ? this.rangeY[0] : this.$utils.getMin(this.hPoints)
-        const maxY = this.rangeY ? this.rangeY[1] : this.$utils.getMax(this.hPoints)
-        const minX = this.rangeX ? this.rangeX[0] : this.$utils.getMin(this.hPoints)
-        const maxX = this.rangeX ? this.rangeX[1] : this.$utils.getMax(this.hPoints)
+      if (this.requiredProps) {
+        const minY = this.yRange ? this.yRange[0] : this.$cChart.getMin(this.yPoints)
+        const maxY = this.yRange ? this.yRange[1] : this.$cChart.getMax(this.yPoints)
+        const minX = this.xRange ? this.xRange[0] : this.xPoints ? this.$cChart.getMin(this.xPoints) : 0
+        const maxX = this.xRange ? this.xRange[1] : this.xPoints ? this.$cChart.getMax(this.xPoints) : this.yPoints.length
         let xPoints = []
         let yPoints = []
-        for (let i = 0; i < this.hPoints.length; i++) {
-          const xToScale = this.vPoints ? this.vPoints[i] : i
-          const pX = this.$utils.scale(xToScale, minX, maxX, this.width)
-          const pY = this.$utils.scale(this.hPoints[i], minY, maxY, this.height, true)
+        for (let i = 0; i < this.yPoints.length; i++) {
+          const x = this.xPoints ? this.xPoints[i] : i
+          const pX = this.$cChart.scale(x, minX, maxX, this.width)
+          const pY = this.$cChart.scale(this.yPoints[i], minY, maxY, this.height, true)
           xPoints.push(pX)
           yPoints.push(pY)
         }
@@ -66,6 +58,15 @@ export default {
         }
         return list
       }
+    },
+    requiredProps () {
+      return this.yPoints && this.yPoints.length > 0 && this.width && this.height
+    },
+    width () {
+      return this.$parent.containerWidth
+    },
+    height () {
+      return this.$parent.containerHeight
     }
   }
 }
