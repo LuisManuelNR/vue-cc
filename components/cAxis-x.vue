@@ -4,7 +4,7 @@
   :stroke="strokeColor"
   stroke-width="1"
   :transform="`translate(0, ${height})`">
-    <line v-if="ticksList && ticksList.length > 0" :x1="ticksList[0].position" :x2="ticksList[ticksList.length - 1].position"></line>
+    <line x1="0" :x2="width"></line>
     <g v-for="(tick, i) in ticksList" :key="'tick' + i"
     :transform="`translate(${tick.position}, 0)`">
       <line y2="6"></line>
@@ -30,7 +30,7 @@ export default {
       default: false
     },
     ticks: {
-      type: Number,
+      type: [Number, String],
       default: 6
     },
     label: {
@@ -47,11 +47,17 @@ export default {
         const minX = this.xRange ? this.xRange[0] : this.byValue ? this.$cChart.getMin(this.xPoints) : 0
         const maxX = this.xRange ? this.xRange[1] : this.byValue ? this.$cChart.getMax(this.xPoints) : this.xPoints.length
         let list = []
-        for (let i = 0; i < this.xPoints.length; i += Math.round(this.xPoints.length / this.ticks) ) {
+        let loop = true
+        let i = 0
+        while (loop && i < this.xPoints.length) {
+          const pos = this.$cChart.scale(i, minX, maxX, this.width)
+          const val = this.xPoints[i].toPrecision(4)
           list.push({
-            position: this.$cChart.scale(i, minX, maxX, this.width),
-            value: this.xPoints[i].toPrecision(4)
+            position: pos,
+            value: val
           })
+          i += Math.round(this.xPoints.length / this.ticks)
+          if (pos > this.width) loop = false
         }
         return list
       }

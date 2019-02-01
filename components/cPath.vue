@@ -24,11 +24,11 @@ export default {
       default: 'steelblue'
     },
     strokeWidth: {
-      type: String,
+      type: [Number, String],
       default: '1.5'
     },
     dasharray: {
-      type: String,
+      type: [Number, String],
       default: ''
     },
     yRange: Array,
@@ -54,13 +54,6 @@ export default {
           i++
           if (pX >= this.width) loop = false
         }
-        // for (let i = 0; i < this.yPoints.length; i++) {
-        //   const x = this.xPoints ? this.xPoints[i] : i
-        //   const pX = this.$cChart.scale(x, minX, maxX, this.width)
-        //   const pY = this.$cChart.scale(this.yPoints[i], minY, maxY, this.height, true)
-        //   xPoints.push(pX)
-        //   yPoints.push(pY)
-        // }
         xPoints.reverse()
         yPoints.reverse()
         let list = `M${xPoints[0]} ${yPoints[0]}`

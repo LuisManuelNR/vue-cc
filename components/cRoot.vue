@@ -11,7 +11,7 @@ export default {
   name: 'cRoot',
   props: {
     height: {
-      type: Number,
+      type: [Number, String],
       default: 500
     },
     marginLeft: {
@@ -19,15 +19,15 @@ export default {
       default: 40
     },
     marginTop: {
-      type: Number,
+      type: [Number, String],
       default: 40
     },
     marginRight: {
-      type: Number,
+      type: [Number, String],
       default: 20
     },
     marginBottom: {
-      type: Number,
+      type: [Number, String],
       default: 30
     },
     bgColor: {
