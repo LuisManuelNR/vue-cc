@@ -34,7 +34,25 @@ export default {
     yRange: Array,
     xRange: Array
   },
+  data: () => ({
+    localOffset: 3
+  }),
   computed: {
+    testPoints () {
+      let start = this.xRange ? this.xRange[0] : 0
+      let end = this.xRange ? this.xRange[1] : this.yPoints.length
+      const midPoint = Math.round((start + end) / 2)
+      const firstHalf = []
+      const secondHalf = []
+      for (let i = midPoint; i >= start; i--) {
+        firstHalf.push(this.yPoints[i])
+      }
+      firstHalf.reverse()
+      for (let i = midPoint + 1; i <= end; i++) {
+        secondHalf.push(this.yPoints[i])
+      }
+      return firstHalf.concat(secondHalf)
+    },
     pointsResult () {
       if (this.requiredProps) {
         const minY = this.yRange ? this.yRange[0] : this.$cChart.getMin(this.yPoints)
@@ -47,10 +65,12 @@ export default {
         let i = 0
         while (loop && i < this.yPoints.length) {
           const x = this.xPoints ? this.xPoints[i] : i
-          const pX = this.$cChart.scale(x, minX, maxX, this.width)
-          const pY = this.$cChart.scale(this.yPoints[i], minY, maxY, this.height, true)
-          xPoints.push(pX)
-          yPoints.push(pY)
+          const pX = this.$cChart.scale(x + this.xOffset, minX, maxX, this.width)
+          const pY = this.$cChart.scale(this.yPoints[i] - this.yOffset, minY, maxY, this.height, true)
+          if (pX >= -250) {
+            xPoints.push(pX)
+            yPoints.push(pY)
+          }
           i++
           if (pX >= this.width) loop = false
         }
@@ -71,6 +91,12 @@ export default {
     },
     height () {
       return this.$parent.containerHeight
+    },
+    xOffset () {
+      return this.$parent.xOffset
+    },
+    yOffset () {
+      return this.$parent.yOffset
     }
   }
 }
