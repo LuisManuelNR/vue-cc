@@ -27,7 +27,7 @@ export default {
       default: 6
     },
     label: String,
-    maxDigit: [Number, String],
+    precision: [Number, String],
     strokeColor: {
       type: String,
       default: 'white'
@@ -42,12 +42,12 @@ export default {
         const d = (max - min) / (this.ticks)
         let o = min
         list.push({
-          val: this.maxDigit ? o.toPrecision(this.maxDigit) : o,
+          val: this.precision ? o.toPrecision(this.precision) : o,
           pos: this.ticks * (this.height / this.ticks)
         })
         for (let i = 1; i <= this.ticks; i++) {
           list.push({
-            val: this.maxDigit ? (o += d).toPrecision(this.maxDigit) : (o += d),
+            val: this.precision ? (o += d).toPrecision(this.precision) : (o += d),
             pos: (this.ticks - i) * (this.height / this.ticks)
           })
         }

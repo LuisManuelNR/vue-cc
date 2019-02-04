@@ -41,12 +41,18 @@ export default {
     paneableY: {
       type: Boolean,
       default: false
+    },
+    zoomable : {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
     xOffset: 0,
     yOffset: 0,
-    panEnabled: false
+    panEnabled: false,
+    zoomMin: 0,
+    zoomMax: 0
   }),
   mounted () {
     if (this.paneableX || this.paneableY) {
@@ -54,17 +60,21 @@ export default {
       this.$el.addEventListener('mouseup', this.dissablePan)
       this.$el.addEventListener('mousemove', this.pan)
     }
+    if (this.zoomable) {
+      this.$el.addEventListener('wheel', this.zoom)
+    }
   },
   beforeDestroy: function () {
     this.$el.removeEventListener('mousedown', this.enablePan)
     this.$el.removeEventListener('mouseup', this.dissablePan)
     this.$el.removeEventListener('mousemove', this.pan)
+    this.$el.removeEventListener('wheel', this.zoom)
   },
   methods: {
     pan(e) {
       if (this.panEnabled) {
-        if (this.paneableX) this.xOffset += e.movementX / 120
-        if (this.paneableY) this.yOffset += e.movementY / 60
+        if (this.paneableX) this.xOffset += e.movementX
+        if (this.paneableY) this.yOffset += e.movementY
       }
     },
     enablePan () {
@@ -72,6 +82,11 @@ export default {
     },
     dissablePan () {
       this.panEnabled = false
+    },
+    zoom (e) {
+      const delta = e.wheelDelta ? e.wheelDelta * 0.02 : -e.deltaY
+      this.zoomMin += delta
+      this.zoomMax += -delta
     }
   },
   computed: {

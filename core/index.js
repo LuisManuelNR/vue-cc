@@ -37,7 +37,7 @@ const utils = {
     return Math.abs(total)
   },
   getMax: (data, key) => {
-    let max = 0
+    let max = Number.NEGATIVE_INFINITY
     if (key) {
       for (let i = 0; i < data.length; i++) {
         max = data[i][key] > max ? data[i][key] : max
@@ -50,7 +50,7 @@ const utils = {
     return max
   },
   getMin: (data, key) => {
-    let min = 10e10
+    let min = Number.POSITIVE_INFINITY
     if (key) {
       for (let i = 0; i < data.length; i++) {
         min = data[i][key] < min ? data[i][key] : min
@@ -63,11 +63,9 @@ const utils = {
     return min
   },
   scale: (point, min, max, lenght, inverted) => {
-    if (inverted) {
-      return lenght - (point - min) / (max - min) * lenght
-    } else {
-      return (point - min) / (max - min) * lenght
-    }
+    if (min === max) return point
+    if (inverted) return lenght - (point - min) / (max - min) * lenght
+    return (point - min) / (max - min) * lenght
   },
   getRandomColor: () => `hsla(${Math.floor(Math.random() * 360)}, 100%, 50%, 1)`
 }
