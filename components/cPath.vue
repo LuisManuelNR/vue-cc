@@ -38,41 +38,50 @@ export default {
     localOffset: 3
   }),
   computed: {
-    testPoints () {
-      let start = this.xRange ? this.xRange[0] : 0
-      let end = this.xRange ? this.xRange[1] : this.yPoints.length
-      const midPoint = Math.round((start + end) / 2)
-      const firstHalf = []
-      const secondHalf = []
-      for (let i = midPoint; i >= start; i--) {
-        firstHalf.push(this.yPoints[i])
-      }
-      firstHalf.reverse()
-      for (let i = midPoint + 1; i <= end; i++) {
-        secondHalf.push(this.yPoints[i])
-      }
-      return firstHalf.concat(secondHalf)
-    },
     pointsResult () {
       if (this.requiredProps) {
-        const minY = this.yRange ? this.yRange[0] : this.$cChart.getMin(this.yPoints)
-        const maxY = this.yRange ? this.yRange[1] : this.$cChart.getMax(this.yPoints)
-        const minX = this.xRange ? this.xRange[0] : this.xPoints ? this.$cChart.getMin(this.xPoints) : 0
-        const maxX = this.xRange ? this.xRange[1] : this.xPoints ? this.$cChart.getMax(this.xPoints) : this.yPoints.length
         let xPoints = []
         let yPoints = []
-        let loop = true
-        let i = 0
-        while (loop && i < this.yPoints.length) {
-          const x = this.xPoints ? this.xPoints[i] : i
-          const pX = this.$cChart.scale(x + this.xOffset, minX, maxX, this.width)
-          const pY = this.$cChart.scale(this.yPoints[i] - this.yOffset, minY, maxY, this.height, true)
-          if (pX >= -250) {
-            xPoints.push(pX)
-            yPoints.push(pY)
+        const minX = this.xRange ? this.xRange[0] : 0
+        const maxX = this.xRange ? this.xRange[1] : this.yPoints.length
+        const midPoint = Math.round(((minX + maxX) / 2) - this.xOffset)
+        // x.1
+        const firstHalf = []
+        let loopFirsHalf = true
+        let iFisrtHalf = midPoint
+        while (loopFirsHalf && iFisrtHalf >= 0) {
+          const pX = this.$cChart.scale(iFisrtHalf + this.xOffset, minX, maxX, this.width)
+          if (pX >= 0) {
+            const vY = this.yPoints[iFisrtHalf]
+            firstHalf.push([pX, vY])
+          } else {
+            loopFirsHalf = false
           }
-          i++
-          if (pX >= this.width) loop = false
+          iFisrtHalf--
+        }
+        firstHalf.reverse()
+        // x.2
+        const secondHalf = []
+        let loopSecondHalf = true
+        let iSecondHalf = midPoint + 1
+        while (loopSecondHalf && iSecondHalf < this.yPoints.length) {
+          const pX = this.$cChart.scale(iSecondHalf + this.xOffset, minX, maxX, this.width)
+          if (pX <= this.width) {
+            const vY = this.yPoints[iSecondHalf]
+            secondHalf.push([pX, vY])
+          } else {
+            loopSecondHalf = false
+          }
+          iSecondHalf++
+        }
+        // y
+        const totalX = firstHalf.concat(secondHalf)
+        const minY = this.yRange ? this.yRange[0] : this.$cChart.getMin(totalX, 1)
+        const maxY = this.yRange ? this.yRange[1] : this.$cChart.getMax(totalX, 1)
+        for (let i = 0; i < totalX.length; i++) {
+          const pY = this.$cChart.scale(totalX[i][1] - this.yOffset, minY, maxY, this.height, true)
+          xPoints.push(totalX[i][0])
+          yPoints.push(pY)
         }
         xPoints.reverse()
         yPoints.reverse()
