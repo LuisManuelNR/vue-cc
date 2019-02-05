@@ -18,7 +18,7 @@
 export default {
   name: 'cAxisY',
   props: {
-    yPoints: {
+    points: {
       type: Array,
       required: true
     },
@@ -35,27 +35,24 @@ export default {
   },
   computed: {
     ticksList () {
-      if (this.yPoints && this.yPoints.length > 0) {
+      if (this.requiredProps) {
         let list = []
-        const min = this.$cChart.getMin(this.yPoints)
-        const max = this.$cChart.getMax(this.yPoints)
-        const d = (max - min) / (this.ticks)
-        let o = min
-        list.push({
-          val: this.precision ? o.toPrecision(this.precision) : o,
-          pos: this.ticks * (this.height / this.ticks)
-        })
-        for (let i = 1; i <= this.ticks; i++) {
+        const min = this.$cChart.getMin(this.points)
+        const max = this.$cChart.getMax(this.points)
+        const d = (max - min) / this.ticks
+        let i = min
+        while (list.length <= this.ticks) {
           list.push({
-            val: this.precision ? (o += d).toPrecision(this.precision) : (o += d),
-            pos: (this.ticks - i) * (this.height / this.ticks)
+            val: i.toFixed(5),
+            pos: this.$cChart.scale(i, min, max, this.height, true)
           })
+          i += d
         }
         return list
       }
     },
     requiredProps () {
-      return this.yPoints && this.yPoints.length > 0 && this.height
+      return this.points && this.points.length > 0 && this.height
     },
     height () {
       return this.$parent.containerHeight

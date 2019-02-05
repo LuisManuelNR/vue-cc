@@ -6,9 +6,9 @@
   :transform="`translate(0, ${height})`">
     <line x1="0" :x2="width"></line>
     <g v-for="(tick, i) in ticksList" :key="'tick' + i"
-    :transform="`translate(${tick.position}, 0)`">
+    :transform="`translate(${tick.pos}, 0)`">
       <line y2="6"></line>
-      <text text-anchor="middle" stroke-width="0.1" y="9" dy="0.71em">{{tick.value}}</text>
+      <text text-anchor="middle" stroke-width="0.1" y="9" dy="0.71em">{{tick.val}}</text>
     </g>
     <text text-anchor="left" x="0" y="-25" dx="1em" dy="0.71em" stroke-width="0.1">{{label}}</text>
   </g>
@@ -18,58 +18,62 @@
 export default {
   name: 'cAxisX',
   props: {
-    xPoints: {
+    points: {
       type: Array,
       required: true
-    },
-    xRange: {
-      type: Array
-    },
-    byValue: {
-      type: Boolean,
-      default: false
     },
     ticks: {
       type: [Number, String],
       default: 6
     },
-    label: {
-      type: String
-    },
+    label: String,
+    precision: [Number, String],
     strokeColor: {
       type: String,
       default: 'white'
+    },
+    byValue: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
     ticksList () {
       if (this.requiredProps) {
-        const minX = this.xRange ? this.xRange[0] : this.byValue ? this.$cChart.getMin(this.xPoints) : 0
-        const maxX = this.xRange ? this.xRange[1] : this.byValue ? this.$cChart.getMax(this.xPoints) : this.xPoints.length
         let list = []
-        let loop = true
+        const rawMin = this.byValue ? this.$cChart.getMin(this.points) : 0
+        const rawMax = this.byValue ? this.$cChart.getMax(this.points) : this.points.length
+        const amplify = 0.3
+        const min = rawMin + this.zoomMin - (this.xOffset * amplify)
+        const max = rawMax + this.zoomMax - (this.xOffset * amplify)
         let i = 0
-        while (loop && i < this.xPoints.length) {
-          const pos = this.$cChart.scale(i, minX, maxX, this.width)
-          const val = this.byValue ? this.xPoints[i].toPrecision(4) : i
+        while (list.length <= this.ticks) {
           list.push({
-            position: pos,
-            value: val
+            val: i,
+            pos: this.$cChart.scale(i, min, max, this.width)
           })
-          i += Math.round(this.xPoints.length / this.ticks)
-          if (pos >= this.width) loop = false
+          i += Math.round(this.points.length / this.ticks)
         }
-        return list
+        return list.reverse()
       }
     },
     requiredProps () {
-      return this.xPoints && this.xPoints.length > 0 && this.width && this.height
+      return this.points && this.points.length > 0 && this.width && this.height
+    },
+    height () {
+      return this.$parent.containerHeight
     },
     width () {
       return this.$parent.containerWidth
     },
-    height () {
-      return this.$parent.containerHeight
+    xOffset () {
+      return this.$parent.xOffset
+    },
+    zoomMin () {
+      return this.$parent.zoomMin
+    },
+    zoomMax () {
+      return this.$parent.zoomMax
     }
   }
 }
