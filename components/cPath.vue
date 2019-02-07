@@ -71,7 +71,7 @@ export default {
         for (let i = 1; i < xPoints.length; i++) {
           list += ` L${xPoints[i][0]} ${yPoints[i]} `
         }
-        this.$emit('change', [Math.round(minX), Math.round(maxX), minY, maxY])
+        this.$emit('change', {minX: minX, maxX: maxX, minY: minY, maxY: maxY, length: xPoints.length})
         return list
       }
     },

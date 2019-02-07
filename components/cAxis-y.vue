@@ -22,6 +22,7 @@ export default {
       type: Array,
       required: true
     },
+    range: Array,
     ticks: {
       type: [Number, String],
       default: 6
@@ -39,15 +40,24 @@ export default {
         let list = []
         const min = this.$cChart.getMin(this.points)
         const max = this.$cChart.getMax(this.points)
-        const d = (max - min) / this.ticks
-        let i = min
-        while (list.length <= this.ticks) {
+        const currentMin = this.range[0] || this.$cChart.getMin(this.points)
+        const currentMax = this.range[1] || this.$cChart.getMax(this.points)
+        const d = (currentMax - currentMin) / this.ticks
+        for (let i = currentMin; i <= currentMax; i += d) {
+          const pos = this.$cChart.scale(i, currentMin, currentMax, this.height, true)
           list.push({
-            val: i.toFixed(5),
-            pos: this.$cChart.scale(i, min, max, this.height, true)
+            val: i.toFixed(2),
+            pos: pos
           })
-          i += d
         }
+        // let i = min
+        // while (list.length <= this.ticks) {
+        //   list.push({
+        //     val: i.toFixed(5),
+        //     pos: this.$cChart.scale(i, min, max, this.height)
+        //   })
+        //   i += d
+        // }
         return list
       }
     },
