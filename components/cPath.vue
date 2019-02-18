@@ -37,43 +37,53 @@ export default {
   },
   computed: {
     pointsResult () {
-      if (this.requiredProps) {
-        let xPoints = []
-        let yPoints = []
-        const rawMinX = this.xRange ? this.xRange[0] : 0
-        const rawMaxX = this.xRange ? this.xRange[1] : this.yPoints.length
-        const amplify = 0.3
-        const minX = rawMinX + this.zoomMin - (this.xOffset * amplify)
-        const maxX = rawMaxX + this.zoomMax - (this.xOffset * amplify)
-        /* maybe implement lvl of detail */
-        // const lvl = this.lvlDetail || this.yPoints.length
-        // x
-        let loop = true
-        let i = minX < 0 ? 0 : minX >= this.yPoints.length - 1 ? this.yPoints.length - 1 : Math.round(minX)
-        while (loop && i < this.yPoints.length) {
-          const pX = this.$cChart.scale(i, minX, maxX, this.width)
-          if (pX >= this.width) loop = false
-          const vY = this.yPoints[i]
-          xPoints.push([pX, vY])
-          i++
-          // i += Math.floor(this.yPoints.length / lvl)
-        }
-        // y
-        const minY = this.yRange ? this.yRange[0] : this.$cChart.getMin(xPoints, 1)
-        const maxY = this.yRange ? this.yRange[1] : this.$cChart.getMax(xPoints, 1)
-        for (let i = 0; i < xPoints.length; i++) {
-          const pY = this.$cChart.scale(xPoints[i][1] - this.yOffset, minY, maxY, this.height, true)
-          yPoints.push(pY)
-        }
-        xPoints.reverse()
-        yPoints.reverse()
-        let list = `M${xPoints[0][0]} ${yPoints[0]}`
-        for (let i = 1; i < xPoints.length; i++) {
-          list += ` L${xPoints[i][0]} ${yPoints[i]} `
-        }
-        this.$emit('change', {minX: minX, maxX: maxX, minY: minY, maxY: maxY, length: xPoints.length})
-        return list
+      let xPoints = []
+      let yPoints = []
+      const minX = this.xRange ? this.xRange[0] : 0
+      const maxX = this.xRange ? this.xRange[1] : this.yPoints.length
+      const offset = this.$cChart.scale(this.xOffset, 0, this.width + this.zoom.k, minX, maxX) 
+      const mid = Math.ceil(((maxX + minX) / 2) - offset)
+      const midpoint = mid <= 0 ? 0 : mid >= this.yPoints.length - 1 ? this.yPoints.length - 1 : mid
+
+      // x firstHalf
+      let loopFH = true
+      let iFH = midpoint
+      while (loopFH && iFH >= minX) {
+        let pX = this.$cChart.scale(iFH, minX, maxX, -this.zoom.k, this.width + this.zoom.k)
+        pX += this.xOffset
+        if (pX <= 0) loopFH = false
+        const vY = this.yPoints[iFH]
+        xPoints.push([pX, vY])
+        iFH--
       }
+      xPoints.reverse()
+      // x secondHalf
+      let loopSH = true
+      let iSH = midpoint + 1
+      while (loopSH && iSH <= maxX - 1) {
+        let pX = this.$cChart.scale(iSH, minX, maxX, -this.zoom.k, this.width + this.zoom.k)
+        pX += this.xOffset
+        if (pX >= this.width) loopSH = false
+        const vY = this.yPoints[iSH]
+        xPoints.push([pX, vY])
+        iSH++
+      }
+      // y
+      const minY = this.yRange ? this.yRange[0] : this.$cChart.getMin(xPoints, 1)
+      const maxY = this.yRange ? this.yRange[1] : this.$cChart.getMax(xPoints, 1)
+      for (let i = 0; i < xPoints.length; i++) {
+        const pY = this.$cChart.scale(xPoints[i][1] - this.yOffset, minY, maxY, this.height, 0)
+        yPoints.push(pY)
+      }
+      let list = `M${xPoints[0][0]} ${yPoints[0]}`
+      for (let i = 1; i < xPoints.length; i++) {
+        list += ` L${xPoints[i][0]} ${yPoints[i]} `
+      }
+      const test = this.$cChart.scale(midpoint, minX, maxX, -this.zoom.k, this.width + this.zoom.k) + this.xOffset
+      this.$emit('midpoint', test)
+      // console.log(test)
+      this.$emit('change', {minX: 0, maxX: xPoints.length, minY: minY, maxY: maxY, length: xPoints.length})
+      return list
     },
     requiredProps () {
       return this.yPoints && this.yPoints.length > 0 && this.width && this.height
@@ -90,11 +100,8 @@ export default {
     yOffset () {
       return this.$parent.yOffset
     },
-    zoomMin () {
-      return this.$parent.zoomMin
-    },
-    zoomMax () {
-      return this.$parent.zoomMax
+    zoom () {
+      return this.$parent.zoom
     }
   }
 }

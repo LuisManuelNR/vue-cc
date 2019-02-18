@@ -13,37 +13,67 @@
 export default {
   name: 'cGrid',
   props: {
-    hTicks: [Number, String],
-    vTicks: [Number, String]
+    hTicks: {
+      type: [Number, String],
+      default: 6
+    },
+    vTicks: {
+      type: [Number, String],
+      default: 6
+    }
+  },
+  data: () => ({
+    vLines: [],
+    hLines: [],
+    vStep: null
+  }),
+  watch: {
+    vTicks: {
+      handler: function (t) {
+        this.vStep = this.width / +t
+        for (let i = 0; i < this.width; i += this.vStep) {
+          this.vLines.push(i)
+        }
+      },
+      immediate: true
+    },
+    hTicks: {
+      handler: function (t) {
+        const step = this.height / +t
+        for (let i = 0; i < this.height; i += step) {
+          this.hLines.push(i)
+        }
+      },
+      immediate: true
+    },
+    z: function (z1, z2) {
+      this.vLines.map((v, i) => {
+        const tx1 = v - this.center[0]
+        const tx2 = z1 > z2 ? tx1 * 1.1 : tx1 / 1.1
+        const tx3 = tx2 + this.center[0]
+        this.$set(this.vLines, i, tx3)
+      })
+      this.hLines.map((v, i) => {
+        const tx1 = v - this.center[1]
+        const tx2 = z1 > z2 ? tx1 * 1.1 : tx1 / 1.1
+        const tx3 = tx2 + this.center[1]
+        this.$set(this.hLines, i, tx3)
+      })
+    },
+    xOffset: function (x) {
+      this.vLines = this.vLines.map(v => v + x)
+    },
+    yOffset: function (y) {
+      this.hLines = this.hLines.map(v => v + y)
+    },
+    vStep: function (s) {
+      this.vLines = []
+      for (let i = 0; i < this.width; i += this.vStep) {
+        this.vLines.push(i)
+      }
+    }
   },
   computed: {
-    hLines () {
-      const ticks = []
-      const d = this.height / +this.hTicks
-      for (let i = 0; i <= +this.hTicks; i++) {
-        ticks.push(i * d)
-      }
-      return ticks
-    },
-    vLines () {
-      {
-        let ticks = []
-        const min = this.zoomMin
-        const max = this.width + this.zoomMax
-        const step = this.width / this.vTicks
-        let i = 0
-        while (ticks.length < +this.vTicks) {
-          let pos = this.$cChart.scale(i + this.xOffset, min, max, this.width)
-          ticks.push(pos)
-          if (pos < 0) ticks.shift()
-          i += step
-        }
-        // const test = this.width / 2
-        // const pos = this.$cChart.scale(test + this.xOffset, min, max, this.width)
-        // ticks.push(pos)
-        return ticks
-      }
-    },
     height () {
       return this.$parent.containerHeight
     },
@@ -53,11 +83,14 @@ export default {
     xOffset () {
       return this.$parent.xOffset
     },
-    zoomMin () {
-      return this.$parent.zoomMin
+    yOffset () {
+      return this.$parent.yOffset
     },
-    zoomMax () {
-      return this.$parent.zoomMax
+    center () {
+      return this.$parent.zoom.center
+    },
+    z () {
+      return this.$parent.zoom.k
     }
   }
 }

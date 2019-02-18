@@ -18,7 +18,7 @@
 export default {
   name: 'cAxisY',
   props: {
-    points: {
+    range: {
       type: Array,
       required: true
     },
@@ -34,35 +34,31 @@ export default {
       default: 'white'
     }
   },
+  data: () => ({
+    min: null,
+    max: null
+  }),
+  created () {
+    this.min = this.range[0]
+    this.max = this.range[1]
+  },
   computed: {
     ticksList () {
-      if (this.requiredProps) {
-        let list = []
-        const min = this.$cChart.getMin(this.points)
-        const max = this.$cChart.getMax(this.points)
-        const currentMin = this.range[0] || this.$cChart.getMin(this.points)
-        const currentMax = this.range[1] || this.$cChart.getMax(this.points)
-        const d = (currentMax - currentMin) / this.ticks
-        for (let i = currentMin; i <= currentMax; i += d) {
-          const pos = this.$cChart.scale(i, currentMin, currentMax, this.height, true)
-          list.push({
-            val: i.toFixed(2),
-            pos: pos
-          })
-        }
-        // let i = min
-        // while (list.length <= this.ticks) {
-        //   list.push({
-        //     val: i.toFixed(5),
-        //     pos: this.$cChart.scale(i, min, max, this.height)
-        //   })
-        //   i += d
-        // }
-        return list
+      let list = []
+      const min = this.range[0]
+      const max = this.range[1]
+      const d = (this.max - this.min) / this.ticks
+      for (let i = min; i <= max; i += d) {
+        const pos = this.$cChart.scale(i, this.min, this.max, this.height, 0)
+        list.push({
+          val: +i.toFixed(5),
+          pos: pos
+        })
       }
+      return list
     },
     requiredProps () {
-      return this.points && this.points.length > 0 && this.height
+      return this.range && this.range.length > 0 && this.height
     },
     height () {
       return this.$parent.containerHeight

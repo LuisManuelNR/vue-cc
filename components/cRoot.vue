@@ -51,8 +51,10 @@ export default {
     xOffset: 0,
     yOffset: 0,
     panEnabled: false,
-    zoomMin: 0,
-    zoomMax: 0
+    zoom: {
+      k: 1,
+      center: [0, 0]
+    }
   }),
   mounted () {
     if (this.paneableX || this.paneableY) {
@@ -61,20 +63,20 @@ export default {
       this.$el.addEventListener('mousemove', this.pan)
     }
     if (this.zoomable) {
-      this.$el.addEventListener('wheel', this.zoom)
+      this.$el.addEventListener('wheel', this.onZoom)
     }
   },
   beforeDestroy: function () {
     this.$el.removeEventListener('mousedown', this.enablePan)
     this.$el.removeEventListener('mouseup', this.dissablePan)
     this.$el.removeEventListener('mousemove', this.pan)
-    this.$el.removeEventListener('wheel', this.zoom)
+    this.$el.removeEventListener('wheel', this.onZoom)
   },
   methods: {
     pan(e) {
       if (this.panEnabled) {
-        if (this.paneableX) this.xOffset += e.movementX
-        if (this.paneableY) this.yOffset += e.movementY
+        if (this.paneableX) this.xOffset = e.movementX
+        if (this.paneableY) this.yOffset = e.movementY
       }
     },
     enablePan () {
@@ -83,10 +85,11 @@ export default {
     dissablePan () {
       this.panEnabled = false
     },
-    zoom (e) {
-      const delta = e.wheelDelta ? e.wheelDelta * 0.02 : -e.deltaY
-      this.zoomMin += delta
-      this.zoomMax += -delta
+    onZoom (e) {
+      this.zoom.k += -e.deltaY < 0 ? -1 : 1
+      this.zoom.center[0] = e.offsetX - this.marginLeft
+      this.zoom.center[1] = e.offsetY - this.marginTop
+      this.$emit('mid', [this.zoom.center[0], this.zoom.center[1]])
     }
   },
   computed: {

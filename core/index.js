@@ -22,7 +22,7 @@ const utils = {
     return inside
   },
   randomNumber: (min, max) => {
-    return Math.random() * (max - min + 1) + min
+    return Math.random() * (max - min) + min
   },
   getPolyArea: (vertices) => {
     let total = 0
@@ -62,10 +62,15 @@ const utils = {
     }
     return min
   },
-  scale: (point, min, max, lenght, inverted) => {
-    if (min === max) return point
-    if (inverted) return lenght - (point - min) / (max - min) * lenght
-    return (point - min) / (max - min) * lenght
+  // scale: (point, min, max, lenght, inverted) => {
+  //   if (min === max) return point
+  //   if (inverted) return lenght - (point - min) / (max - min) * lenght
+  //   return (point - min) / (max - min) * lenght
+  // },
+  scale: (point, minD, maxD, minR, maxR) => {
+    if (minD === maxD) return point
+    const ratio = (maxR - minR) / (maxD - minD)
+    return minR + ratio * (point - minD)
   },
   getRandomColor: () => `hsla(${Math.floor(Math.random() * 360)}, 100%, 50%, 1)`
 }

@@ -18,7 +18,7 @@
 export default {
   name: 'cAxisX',
   props: {
-    points: {
+    range: {
       type: Array,
       required: true
     },
@@ -39,26 +39,46 @@ export default {
   },
   computed: {
     ticksList () {
-      if (this.requiredProps) {
-        let list = []
-        const rawMin = this.byValue ? this.$cChart.getMin(this.points) : 0
-        const rawMax = this.byValue ? this.$cChart.getMax(this.points) : this.points.length
-        const amplify = 0.3
-        const min = rawMin + this.zoomMin - (this.xOffset * amplify)
-        const max = rawMax + this.zoomMax - (this.xOffset * amplify)
-        let i = 0
-        while (list.length <= this.ticks) {
+      let list = []
+      const min = this.range[0]
+      const max = this.range[1]
+      const step = (max - min) / this.ticks
+      const minPx = -this.zoom.k + this.xOffset
+      const maxPx = this.width + this.zoom.k + this.xOffset
+      const mid = this.$cChart.scale((this.width / 2) + this.xOffset, minPx, maxPx, min, max)
+      // first half
+      let iFH = mid
+      let loopFH = true
+      while (loopFH) {
+        let pos = this.$cChart.scale(iFH, min, max, minPx, maxPx)
+        if (pos <= -2) {
+          loopFH = false
+        } else {
           list.push({
-            val: i,
-            pos: this.$cChart.scale(i, min, max, this.width)
+            val: +iFH.toFixed(1),
+            pos: pos
           })
-          i += Math.round(this.points.length / this.ticks)
+          iFH -= step
         }
-        return list.reverse()
       }
-    },
-    requiredProps () {
-      return this.points && this.points.length > 0 && this.width && this.height
+      // second half
+      let iSH = mid + step
+      let loopSH = true
+      while (loopSH) {
+        let pos = this.$cChart.scale(iSH, min, max, minPx, maxPx)
+        if (pos >= this.width + 2) {
+          loopSH = false
+        } else {
+          list.push({
+            val: +iSH.toFixed(1),
+            pos: pos
+          })
+          iSH += step
+        }
+      }
+      this.$emit('midpoint', this.$cChart.scale(mid, min, max, minPx, maxPx))
+      // this.$emit('newDomain', [newMin, newMax])
+      return list
     },
     height () {
       return this.$parent.containerHeight
@@ -69,11 +89,8 @@ export default {
     xOffset () {
       return this.$parent.xOffset
     },
-    zoomMin () {
-      return this.$parent.zoomMin
-    },
-    zoomMax () {
-      return this.$parent.zoomMax
+    zoom () {
+      return this.$parent.zoom
     }
   }
 }
