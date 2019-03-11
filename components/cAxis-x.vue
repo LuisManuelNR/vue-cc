@@ -18,67 +18,23 @@
 export default {
   name: 'cAxisX',
   props: {
-    range: {
+    domain: {
       type: Array,
-      required: true
+      default: () => [0, 1]
     },
     ticks: {
       type: [Number, String],
-      default: 6
+      default: 10
     },
     label: String,
-    precision: [Number, String],
     strokeColor: {
       type: String,
       default: 'white'
-    },
-    byValue: {
-      type: Boolean,
-      default: false
     }
   },
   computed: {
     ticksList () {
-      let list = []
-      const min = this.range[0]
-      const max = this.range[1]
-      const step = (max - min) / this.ticks
-      const minPx = -this.zoom.k + this.xOffset
-      const maxPx = this.width + this.zoom.k + this.xOffset
-      const mid = this.$cChart.scale((this.width / 2) + this.xOffset, minPx, maxPx, min, max)
-      // first half
-      let iFH = mid
-      let loopFH = true
-      while (loopFH) {
-        let pos = this.$cChart.scale(iFH, min, max, minPx, maxPx)
-        if (pos <= -2) {
-          loopFH = false
-        } else {
-          list.push({
-            val: +iFH.toFixed(1),
-            pos: pos
-          })
-          iFH -= step
-        }
-      }
-      // second half
-      let iSH = mid + step
-      let loopSH = true
-      while (loopSH) {
-        let pos = this.$cChart.scale(iSH, min, max, minPx, maxPx)
-        if (pos >= this.width + 2) {
-          loopSH = false
-        } else {
-          list.push({
-            val: +iSH.toFixed(1),
-            pos: pos
-          })
-          iSH += step
-        }
-      }
-      this.$emit('midpoint', this.$cChart.scale(mid, min, max, minPx, maxPx))
-      // this.$emit('newDomain', [newMin, newMax])
-      return list
+      return this.$cc.generateTicks(this.base[0], this.base[1], +this.ticks, this.domain)
     },
     height () {
       return this.$parent.containerHeight
@@ -86,11 +42,8 @@ export default {
     width () {
       return this.$parent.containerWidth
     },
-    xOffset () {
-      return this.$parent.xOffset
-    },
-    zoom () {
-      return this.$parent.zoom
+    base () {
+      return this.$parent.baseX
     }
   }
 }

@@ -49,7 +49,7 @@ export default {
       const max = this.range[1]
       const d = (this.max - this.min) / this.ticks
       for (let i = min; i <= max; i += d) {
-        const pos = this.$cChart.scale(i, this.min, this.max, this.height, 0)
+        const pos = this.$cc.scale(i, this.min, this.max, this.height, 0)
         list.push({
           val: +i.toFixed(5),
           pos: pos

@@ -35,12 +35,12 @@ export default {
   computed: {
     list () {
       let list = []
-      const max = this.$cChart.getMax(this.dataset, this.column)
-      const min = this.$cChart.getMin(this.dataset, this.column)
+      const max = this.$cc.getMax(this.dataset, this.column)
+      const min = this.$cc.getMin(this.dataset, this.column)
       for (let i = 0; i < this.dataset.length; i++) {
         list.push({
           d: this.dataset[i][this.column],
-          v: this.$cChart.scale(this.dataset[i][this.column], min, max, this.height, true)
+          v: this.$cc.scale(this.dataset[i][this.column], min, max, this.height, true)
         })
       }
       return list

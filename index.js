@@ -5,7 +5,7 @@ import cBars from './components/cBars'
 import cPath from './components/cPath'
 import cCircle from './components/cCircle'
 import cGrid from './components/cGrid'
-import cChart from './core'
+import cc from './core'
 const graph2dComponents = {
   install (Vue) {
     Vue.component(cRoot.name, cRoot)
@@ -15,7 +15,7 @@ const graph2dComponents = {
     Vue.component(cPath.name, cPath)
     Vue.component(cCircle.name, cCircle)
     Vue.component(cGrid.name, cGrid)
-    Vue.prototype.$cChart = cChart
+    Vue.prototype.$cc = cc
   }
 }
 

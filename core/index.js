@@ -1,4 +1,5 @@
-const utils = {
+// import ticks from '../ticks'
+const cc = {
   distance: (p1, p2) => {
     const xd = p1.x - p2.x
     const yd = p1.y - p2.y
@@ -62,16 +63,31 @@ const utils = {
     }
     return min
   },
-  // scale: (point, min, max, lenght, inverted) => {
-  //   if (min === max) return point
-  //   if (inverted) return lenght - (point - min) / (max - min) * lenght
-  //   return (point - min) / (max - min) * lenght
-  // },
-  scale: (point, minD, maxD, minR, maxR) => {
+  scale (point, minD, maxD, minR, maxR) {
     if (minD === maxD) return point
     const ratio = (maxR - minR) / (maxD - minD)
     return minR + ratio * (point - minD)
   },
-  getRandomColor: () => `hsla(${Math.floor(Math.random() * 360)}, 100%, 50%, 1)`
+  // zoom (point, z, centroid) {
+  //   return centroid + z * (point - centroid)
+  // },
+  zoom (point, z, centroid) {
+    const t = point - centroid
+    const zoom = z < 0 ? t / 1.1 : t * 1.1
+    return zoom + centroid
+  },
+  getRandomColor: () => `hsla(${Math.floor(Math.random() * 360)}, 100%, 50%, 1)`,
+
+  generateTicks (min, max, count, domain) {
+    let list = []
+    const step = (max - min) / count
+    for (let i = min; i <= max; i += step) {
+      list.push({
+        val: this.scale(i, min, max, domain[0], domain[1]).toFixed(1),
+        pos: i
+      })
+    }
+    return list
+  }
 }
-export default utils
+export default cc

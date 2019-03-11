@@ -24,7 +24,7 @@ export default {
     },
     marginRight: {
       type: [Number, String],
-      default: 20
+      default: 40
     },
     marginBottom: {
       type: [Number, String],
@@ -48,14 +48,15 @@ export default {
     }
   },
   data: () => ({
-    xOffset: 0,
-    yOffset: 0,
+    origin: [0, 0],
+    baseX: [0, 1],
+    baseY: [1, 1],
     panEnabled: false,
-    zoom: {
-      k: 1,
-      center: [0, 0]
-    }
+    zoom: 1
   }),
+  created () {
+    this.baseX[1] = this.containerWidth
+  },
   mounted () {
     if (this.paneableX || this.paneableY) {
       this.$el.addEventListener('mousedown', this.enablePan)
@@ -75,8 +76,8 @@ export default {
   methods: {
     pan(e) {
       if (this.panEnabled) {
-        if (this.paneableX) this.xOffset = e.movementX
-        if (this.paneableY) this.yOffset = e.movementY
+        if (this.paneableX) this.baseX = this.baseX.map(v => v += e.movementX)
+        if (this.paneableY) this.baseY = this.baseY.map(v => v += e.movementY)
       }
     },
     enablePan () {
@@ -86,10 +87,12 @@ export default {
       this.panEnabled = false
     },
     onZoom (e) {
-      this.zoom.k += -e.deltaY < 0 ? -1 : 1
-      this.zoom.center[0] = e.offsetX - this.marginLeft
-      this.zoom.center[1] = e.offsetY - this.marginTop
-      this.$emit('mid', [this.zoom.center[0], this.zoom.center[1]])
+      // this.zoom += -e.deltaY < 0 ? -1 : 1
+      // this.zoom += -event.deltaY * (event.deltaMode ? 120 : 1) / this.containerWidth
+      const originX = e.offsetX - this.marginLeft
+      const originY = e.offsetY - this.marginTop
+      this.baseX = this.baseX.map(v => this.$cc.zoom(v, -e.deltaY, originX))
+      this.baseY = this.baseY.map(v => this.$cc.zoom(v, -e.deltaY, originY))
     }
   },
   computed: {
