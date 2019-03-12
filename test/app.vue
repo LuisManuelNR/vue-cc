@@ -3,8 +3,10 @@
     <c-root zoomable paneable-x paneable-y>
       <!-- <c-grid /> -->
       <!-- <c-path :yPoints="dataSet" /> -->
-      <c-axis-x @midpoint="mid = $event" :domain="domain" :ticks="ticks"></c-axis-x>
-      <line :x1="mid" y1="0" :x2="mid" y2="400" style="stroke:rgb(255,0,0);stroke-width:2" />
+      <c-axis-x :domain="domain" :ticks="ticks * 2" />
+      <c-axis-y :domain="domain" :ticks="ticks" />
+      <c-grid :vTicks="ticks * 2" :hTicks="ticks" />
+      <!-- <line :x1="mid" y1="0" :x2="mid" y2="400" style="stroke:rgb(255,0,0);stroke-width:2" /> -->
       <!-- <debug-axis></debug-axis> -->
     </c-root>
     <button @click="tticks(1)">+ ticks</button>

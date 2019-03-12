@@ -49,13 +49,14 @@ export default {
   },
   data: () => ({
     origin: [0, 0],
-    baseX: [0, 1],
-    baseY: [1, 1],
+    baseX: [0, 0],
+    baseY: [0, 0],
     panEnabled: false,
     zoom: 1
   }),
   created () {
     this.baseX[1] = this.containerWidth
+    this.baseY[0] = this.containerHeight
   },
   mounted () {
     if (this.paneableX || this.paneableY) {
@@ -103,7 +104,7 @@ export default {
       return this.height - this.marginTop - this.marginBottom
     },
     width () {
-      return document.documentElement.clientWidth
+      return this.$el ? this.$el.clientWidth : document.documentElement.clientWidth
     }
   }
 }

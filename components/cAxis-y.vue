@@ -18,50 +18,33 @@
 export default {
   name: 'cAxisY',
   props: {
-    range: {
+    domain: {
       type: Array,
-      required: true
+      default: () => [0, 1]
     },
-    range: Array,
     ticks: {
       type: [Number, String],
-      default: 6
+      default: 10
     },
     label: String,
-    precision: [Number, String],
     strokeColor: {
       type: String,
       default: 'white'
     }
   },
-  data: () => ({
-    min: null,
-    max: null
-  }),
-  created () {
-    this.min = this.range[0]
-    this.max = this.range[1]
-  },
   computed: {
     ticksList () {
-      let list = []
-      const min = this.range[0]
-      const max = this.range[1]
-      const d = (this.max - this.min) / this.ticks
-      for (let i = min; i <= max; i += d) {
-        const pos = this.$cc.scale(i, this.min, this.max, this.height, 0)
-        list.push({
-          val: +i.toFixed(5),
-          pos: pos
-        })
-      }
-      return list
-    },
-    requiredProps () {
-      return this.range && this.range.length > 0 && this.height
+      const ticksPosition = this.$cc.generateTicks(this.base[0], this.base[1], +this.ticks)
+      return ticksPosition.map(v => ({
+        val: this.$cc.scale(v, this.base[0], this.base[1], this.domain[0], this.domain[1]).toFixed(1),
+        pos: v
+      }))
     },
     height () {
       return this.$parent.containerHeight
+    },
+    base () {
+      return this.$parent.baseY
     }
   }
 }

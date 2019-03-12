@@ -1,4 +1,3 @@
-// import ticks from '../ticks'
 const cc = {
   distance: (p1, p2) => {
     const xd = p1.x - p2.x
@@ -78,14 +77,13 @@ const cc = {
   },
   getRandomColor: () => `hsla(${Math.floor(Math.random() * 360)}, 100%, 50%, 1)`,
 
-  generateTicks (min, max, count, domain) {
-    let list = []
-    const step = (max - min) / count
-    for (let i = min; i <= max; i += step) {
-      list.push({
-        val: this.scale(i, min, max, domain[0], domain[1]).toFixed(1),
-        pos: i
-      })
+  generateTicks (min, max, count) {
+    const list = []
+    const start = max > min ? min : max
+    const end = max > min ? max : min
+    const step = (end - start) / count
+    for (let i = start; i <= end; i += step) {
+      list.push(i)
     }
     return list
   }
