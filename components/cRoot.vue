@@ -42,7 +42,11 @@ export default {
       type: Boolean,
       default: false
     },
-    zoomable : {
+    zoomableX: {
+      type: Boolean,
+      default: false
+    },
+    zoomableY: {
       type: Boolean,
       default: false
     }
@@ -64,7 +68,7 @@ export default {
       this.$el.addEventListener('mouseup', this.dissablePan)
       this.$el.addEventListener('mousemove', this.pan)
     }
-    if (this.zoomable) {
+    if (this.zoomableX || this.zoomableY) {
       this.$el.addEventListener('wheel', this.onZoom)
     }
   },
@@ -90,10 +94,12 @@ export default {
     onZoom (e) {
       // this.zoom += -e.deltaY < 0 ? -1 : 1
       // this.zoom += -event.deltaY * (event.deltaMode ? 120 : 1) / this.containerWidth
-      const originX = e.offsetX - this.marginLeft
-      const originY = e.offsetY - this.marginTop
-      this.baseX = this.baseX.map(v => this.$cc.zoom(v, -e.deltaY, originX))
-      this.baseY = this.baseY.map(v => this.$cc.zoom(v, -e.deltaY, originY))
+      if (this.zoomableX) {
+        this.baseX = this.baseX.map(v => this.$cc.zoom(v, -e.deltaY, e.offsetX - this.marginLeft))
+      }
+      if (this.zoomableY) {
+        this.baseY = this.baseY.map(v => this.$cc.zoom(v, -e.deltaY, e.offsetY - this.marginTop))
+      }
     }
   },
   computed: {
