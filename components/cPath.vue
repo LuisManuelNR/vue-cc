@@ -38,7 +38,11 @@ export default {
       const p = []
       const minY = this.$cc.getMin(this.y)
       const maxY = this.$cc.getMax(this.y)
-      for (let i = 0; i < this.y.length; i++) {
+      const minIndex = this.baseX[0] < 0 ? this.$cc.scale(this.baseX[0], 0, this.width, 0, this.y.length) : 0
+      const maxIndex = this.baseX[1] >= this.width ? this.$cc.scale(this.baseX[1], this.width, 0, 0, this.y.length) : 0
+      // console.log('min', Math.abs(Math.floor(minIndex)))
+      // console.log('max', Math.abs(Math.floor(minIndex)))
+      for (let i = Math.abs(Math.floor(minIndex)); i < this.y.length + Math.floor(maxIndex); i++) {
         p.push([
           this.$cc.scale(i, 0, this.y.length, this.baseX[0], this.baseX[1]),
           this.$cc.scale(this.y[i], minY, maxY, this.baseY[0], this.baseY[1])
@@ -48,7 +52,7 @@ export default {
       for (let i = 1; i < p.length; i++) {
         list += ` L${p[i][0]} ${p[i][1]} `
       }
-      console.log(p)
+      console.log(p.length)
       return list
     },
     width () {
