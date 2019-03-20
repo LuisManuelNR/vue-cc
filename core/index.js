@@ -78,14 +78,28 @@ const cc = {
   getRandomColor: () => `hsla(${Math.floor(Math.random() * 360)}, 100%, 50%, 1)`,
 
   generateTicks (min, max, count) {
-    const list = []
-    const start = max > min ? min : max
-    const end = max > min ? max : min
+    const e10 = Math.sqrt(50)
+    const e5 = Math.sqrt(10)
+    const e2 = Math.sqrt(2)
+    // const list = []
+    let n
+    let i = -1
+    let start = max > min ? min : max
+    let end = max > min ? max : min
     const step = (end - start) / count
-    for (let i = start; i <= end; i += step) {
-      list.push(i)
-    }
-    return list
+    let step1 = Math.pow(10, Math.floor(Math.log(step) / Math.LN10))
+    const error = step / step1
+    if (error >= e10) step1 *= 10
+    else if (error >= e5) step1 *= 5
+    else if (error >= e2) step1 *= 2
+    // for (let i = start; i <= end; i += step1) {
+      //   list.push(i)
+      // }
+    start = Math.ceil(start / step1)
+    end = Math.floor(end / step1)
+    let ticks = new Array(n = Math.ceil(end - start + 1))
+    while (++i < n) ticks[i] = (start + i) * step1
+    return ticks
   }
 }
 export default cc

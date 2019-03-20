@@ -81,7 +81,10 @@ export default {
   methods: {
     pan(e) {
       if (this.panEnabled) {
-        if (this.paneableX) this.baseX = this.baseX.map(v => v += e.movementX)
+        if (this.paneableX) {
+          this.baseX = this.baseX.map(v => v += e.movementX)
+          this.$set(this.origin, 0, e.offsetX - this.marginLeft)
+        }
         if (this.paneableY) this.baseY = this.baseY.map(v => v += e.movementY)
       }
     },
@@ -92,13 +95,13 @@ export default {
       this.panEnabled = false
     },
     onZoom (e) {
-      // this.zoom += -e.deltaY < 0 ? -1 : 1
-      // this.zoom += -event.deltaY * (event.deltaMode ? 120 : 1) / this.containerWidth
+      this.$set(this.origin, 0, e.offsetX - this.marginLeft)
+      this.$set(this.origin, 1, e.offsetY - this.marginTop)
       if (this.zoomableX) {
-        this.baseX = this.baseX.map(v => this.$cc.zoom(v, -e.deltaY, e.offsetX - this.marginLeft))
+        this.baseX = this.baseX.map(v => this.$cc.zoom(v, -e.deltaY, this.origin[0]))
       }
       if (this.zoomableY) {
-        this.baseY = this.baseY.map(v => this.$cc.zoom(v, -e.deltaY, e.offsetY - this.marginTop))
+        this.baseY = this.baseY.map(v => this.$cc.zoom(v, -e.deltaY, this.origin[1]))
       }
     }
   },
