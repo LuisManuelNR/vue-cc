@@ -34,11 +34,13 @@ export default {
   },
   computed: {
     ticksList () {
-      const ticksPosition = this.$cc.generateTicks(this.base[0], this.base[1], +this.ticks)
-      return ticksPosition.map(v => ({
-        val: this.$cc.scale(v, this.base[0], this.base[1], this.domain[0], this.domain[1]).toFixed(1),
-        pos: v
+      const minDomain = this.$cc.scale(0, this.base[0], this.base[1], this.domain[0], this.domain[1])
+      const maxDomain = this.$cc.scale(this.height, this.base[0], this.base[1], this.domain[0], this.domain[1])
+      const result = this.$cc.ticks(minDomain, maxDomain, +this.ticks).map(v => ({
+        val: v,
+        pos: this.$cc.scale(v, this.domain[0], this.domain[1], this.base[0], this.base[1])
       }))
+      return result
     },
     height () {
       return this.$parent.containerHeight

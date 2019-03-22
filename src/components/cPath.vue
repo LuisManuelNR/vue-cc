@@ -18,7 +18,7 @@ export default {
       type: Array,
       required: true
     },
-    x: Array,
+    x: Array, // TODO
     color: {
       type: String,
       default: 'steelblue'
@@ -31,7 +31,11 @@ export default {
       type: [Number, String],
       default: ''
     },
-    lvlDetail: [Number, String]
+    lvlDetail: [Number, String], // TODO
+    pinY: {
+      type: Boolean,
+      default: false
+    }
   },
   computed: {
     d () {
@@ -70,8 +74,8 @@ export default {
         }
       }
       // y
-      const minY = this.$cc.getMin(xs, 1)
-      const maxY = this.$cc.getMax(xs, 1)
+      const minY = this.pinY ? this.$cc.getMin(xs, 1) : this.$cc.getMin(this.y)
+      const maxY = this.pinY ? this.$cc.getMax(xs, 1) : this.$cc.getMax(this.y)
       const p = xs.map(v => ([
         v[0],
         this.$cc.scale(v[1], minY, maxY, this.baseY[0], this.baseY[1])
@@ -80,6 +84,7 @@ export default {
       for (let i = 1; i < p.length; i++) {
         list += ` L${p[i][0]} ${p[i][1]} `
       }
+      this.$emit('domainY', [minY, maxY])
       return list
     },
     width () {

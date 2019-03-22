@@ -1,14 +1,15 @@
 {
-  "name": "vue-chart2d-constructor",
-  "version": "1.2.17",
-  "description": "Build charts in a modular way with vue",
+  "name": "vue-cc",
+  "version": "1.0.0",
+  "description": "Build graph with svg component in a vue way",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint ./src --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LuisManuelNR/vue-chart2d-constructor.git"
+    "url": "git+https://github.com/LuisManuelNR/vue-cc.git"
   },
   "keywords": [
     "vue",
@@ -19,17 +20,16 @@
   "author": "Luis Manuel Noguerol Ramírez (https://chazycub.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/LuisManuelNR/vue-chart2d-constructor/issues"
+    "url": "https://github.com/LuisManuelNR/vue-cc/issues"
   },
-  "homepage": "https://github.com/LuisManuelNR/vue-chart2d-constructor#readme",
+  "homepage": "https://github.com/LuisManuelNR/vue-cc#readme",
   "devDependencies": {
-    "eslint": "^5.6.1",
+    "eslint": "^5.15.3",
     "eslint-config-standard": "^12.0.0",
-    "eslint-friendly-formatter": "^4.0.1",
-    "eslint-loader": "^2.1.1",
-    "eslint-plugin-html": "^4.0.6",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0"
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-vue": "^5.2.2"
   }
 }

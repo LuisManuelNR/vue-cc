@@ -1,11 +1,10 @@
-import cRoot from './components/cRoot'
-import cAxisX from './components/cAxis-x'
-import cAxisY from './components/cAxis-y'
-import cBars from './components/cBars'
-import cPath from './components/cPath'
-import cCircle from './components/cCircle'
-import cGrid from './components/cGrid'
-import cc from './core'
+import cRoot from './src/components/cRoot'
+import cAxisX from './src/components/cAxis-x'
+import cAxisY from './src/components/cAxis-y'
+import cBars from './src/components/cBars'
+import cPath from './src/components/cPath'
+import cCircle from './src/components/cCircle'
+import cc from './src/core'
 const graph2dComponents = {
   install (Vue) {
     Vue.component(cRoot.name, cRoot)
@@ -14,7 +13,6 @@ const graph2dComponents = {
     Vue.component(cBars.name, cBars)
     Vue.component(cPath.name, cPath)
     Vue.component(cCircle.name, cCircle)
-    Vue.component(cGrid.name, cGrid)
     Vue.prototype.$cc = cc
   }
 }
