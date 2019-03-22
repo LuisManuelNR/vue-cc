@@ -12,4 +12,4 @@ import cc from '@chazy/vue-cc'
 Vue.use(cc)
 ```
 
-and you ready to use the components, to see some example take a look in src/example
+and you ready to use the components, to see some example take a look in example/app.vue
