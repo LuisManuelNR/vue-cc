@@ -1,6 +1,6 @@
 {
   "name": "@chazy/vue-cc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Build graph with svg component in a vue way",
   "main": "index.js",
   "scripts": {
