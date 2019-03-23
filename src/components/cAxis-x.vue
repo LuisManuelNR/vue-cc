@@ -40,7 +40,6 @@ export default {
         val: v,
         pos: this.$cc.scale(v, this.domain[0], this.domain[1], this.base[0], this.base[1])
       }))
-      console.log(result)
       return result
     },
     height () {

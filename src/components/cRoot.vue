@@ -56,13 +56,16 @@ export default {
     baseX: [0, 0],
     baseY: [0, 0],
     panEnabled: false,
-    zoom: 1
+    zoom: 1,
+    width: 1000
   }),
   created () {
     this.baseX[1] = this.containerWidth
     this.baseY[0] = this.containerHeight
   },
   mounted () {
+    this.setWidth()
+    window.addEventListener('resize', this.setWidth)
     if (this.paneableX || this.paneableY) {
       this.$el.addEventListener('mousedown', this.enablePan)
       this.$el.addEventListener('mouseup', this.dissablePan)
@@ -77,8 +80,12 @@ export default {
     this.$el.removeEventListener('mouseup', this.dissablePan)
     this.$el.removeEventListener('mousemove', this.pan)
     this.$el.removeEventListener('wheel', this.onZoom)
+    window.removeEventListener('resize', this.setWidth)
   },
   methods: {
+    setWidth () {
+      this.width = this.$el.clientWidth
+    },
     pan(e) {
       if (this.panEnabled) {
         if (this.paneableX) {
@@ -111,9 +118,6 @@ export default {
     },
     containerHeight () {
       return this.height - this.marginTop - this.marginBottom
-    },
-    width () {
-      return this.$el ? this.$el.clientWidth : document.documentElement.clientWidth
     }
   }
 }
