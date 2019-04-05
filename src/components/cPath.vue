@@ -37,60 +37,90 @@ export default {
       default: false
     }
   },
-  computed: {
-    d () {
-      if (this.y.length > 0) {
-        const midPos = this.origin === 0 ? this.width / 2 : this.origin
-        const scalePosToIndex = Math.floor(this.$cc.scale(midPos, this.baseX[0], this.baseX[1], 0, this.y.length))
-        const midIndex = scalePosToIndex < 0 ? 0 : scalePosToIndex > this.y.length ? this.y.length : scalePosToIndex
-        const xs = []
-        // x
-        let i1 = midIndex
-        let loop1 = true
-        while (loop1 && i1 < this.y.length) {
-          const x = this.$cc.scale(i1, 0, this.y.length, this.baseX[0], this.baseX[1])
-          if (x > this.width) {
-            loop1 = false
-          } else {
-            xs.push([
-              x,
-              this.y[i1]
-            ])
-            i1++
-          }
+  watch: {
+    y: {
+      handler (y) {
+        this.drawPath(y, this.baseX, this.baseY)
+      },
+      immediate: true
+    },
+    baseX (b) {
+      this.drawPath(this.y, b, this.baseY)
+    },
+    baseY (b) {
+      this.drawPath(this.y, this.baseX, b)
+    }
+  },
+  data: () => ({
+    d: ''
+  }),
+  methods: {
+    drawPath (y, baseX, baseY) {
+      const points = ['M']
+      const midPos = this.origin === 0 ? this.width / 2 : this.origin
+      const scalePosToIndex = Math.floor(this.$cc.scale(midPos, this.baseX[0], this.baseX[1], 0, this.y.length))
+      const midIndex = scalePosToIndex < 0 ? 0 : scalePosToIndex > this.y.length ? this.y.length : scalePosToIndex
+      const xs = []
+      // x
+      let i1 = midIndex
+      let loop1 = true
+      while (loop1 && i1 < this.y.length) {
+        const x = this.$cc.scale(i1, 0, this.y.length, this.baseX[0], this.baseX[1])
+        if (x > this.width) {
+          loop1 = false
+        } else {
+          xs.push([
+            x,
+            this.y[i1]
+          ])
+          i1++
         }
-        xs.reverse()
-        let i2 = midIndex - 1
-        let loop2 = true
-        while (loop2 && i2 >= 0) {
-          const x = this.$cc.scale(i2, 0, this.y.length, this.baseX[0], this.baseX[1])
-          if (x < 0) {
-            loop2 = false
-          } else {
-            xs.push([
-              x,
-              this.y[i2]
-            ])
-            i2--
-          }
+      }
+      xs.reverse()
+      let i2 = midIndex - 1
+      let loop2 = true
+      while (loop2 && i2 >= 0) {
+        const x = this.$cc.scale(i2, 0, this.y.length, this.baseX[0], this.baseX[1])
+        if (x < 0) {
+          loop2 = false
+        } else {
+          xs.push([
+            x,
+            this.y[i2]
+          ])
+          i2--
         }
-        // y
-        const minY = this.pinY ? this.$cc.getMin(xs, 1) : this.$cc.getMin(this.y)
-        const maxY = this.pinY ? this.$cc.getMax(xs, 1) : this.$cc.getMax(this.y)
-        const p = xs.map(v => ([
+      }
+      // y
+      const minY = this.pinY ? this.$cc.getMin(xs, 1) : this.$cc.getMin(this.y)
+      const maxY = this.pinY ? this.$cc.getMax(xs, 1) : this.$cc.getMax(this.y)
+      for (let i = 0; i < xs.length; i++) {
+        const v = xs[i]
+        points.push(
           v[0],
           this.$cc.scale(v[1], minY, maxY, this.baseY[0], this.baseY[1])
-        ]))
-        let list = `M${p[0][0]} ${p[0][1]}`
-        for (let i = 1; i < p.length; i++) {
-          list += ` L${p[i][0]} ${p[i][1]} `
-        }
-        this.$emit('domainY', [minY, maxY])
-        return list
-      } else {
-        return ''
+        )
       }
-    },
+      // this.$emit('domainY', [minY, maxY])
+      this.d = points.join(' ')
+    }
+  },
+  computed: {
+    // d () {
+    //   const points = ['M']
+    //   const minY = this.$cc.getMin(this.y)
+    //   const maxY = this.$cc.getMax(this.y)
+    //   console.time()
+    //   for (let i = 0; i < this.y.length; i++) {
+    //     const v = this.y[i]
+    //     points.push(
+    //       this.$cc.scale(i, 0, this.y.length, this.baseX[0], this.baseX[1]),
+    //       this.$cc.scale(v, minY, maxY, this.baseY[0], this.baseY[1])
+    //     )
+    //   }
+    //   console.timeEnd()
+    //   return points.join(' ')
+    // },
     width () {
       return this.$parent.containerWidth
     },
