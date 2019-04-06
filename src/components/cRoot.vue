@@ -59,13 +59,11 @@ export default {
     zoom: 1,
     width: 1000
   }),
-  created () {
-    this.baseX[1] = this.containerWidth
-    this.baseY[0] = this.containerHeight
-  },
   mounted () {
     this.setWidth()
     window.addEventListener('resize', this.setWidth)
+    this.$set(this.baseX, 1, this.containerWidth)
+    this.$set(this.baseY, 0, this.containerHeight)
     if (this.paneableX || this.paneableY) {
       this.$el.addEventListener('mousedown', this.enablePan)
       this.$el.addEventListener('mouseup', this.dissablePan)
