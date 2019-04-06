@@ -18,7 +18,7 @@ export default {
       type: Array,
       required: true
     },
-    x: Array, // TODO
+    x: Array,
     color: {
       type: String,
       default: 'steelblue'
@@ -31,10 +31,38 @@ export default {
       type: [Number, String],
       default: ''
     },
-    lvlDetail: [Number, String], // TODO
-    pinY: {
-      type: Boolean,
-      default: false
+    domainX: {
+      type: Array,
+      validator: v => v.length === 2
+    },
+    domainY: {
+      type: Array,
+      validator: v => v.length === 2
+    }
+  },
+  created() {
+    if (this.x) {
+      if (this.x.length !== this.y.length) throw 'x and y length must match'
+    }
+  },
+  data: () => ({
+    d: ''
+  }),
+  methods: {
+    drawPath (y, baseX, baseY) {
+      const points = ['M']
+      for (let i = 0; i < y.length; i++) {
+        const px = this.x ? this.x[i] : i
+        const py = y[i]
+        if (isFinite(px) && isFinite(py)) {
+          points.push(
+            this.$cc.scale(px, this.xDomain[0], this.xDomain[1], baseX[0], baseX[1]),
+            this.$cc.scale(py, this.yDomain[0], this.yDomain[1], baseY[0], baseY[1])
+          )
+        }
+        else points.push('M')
+      }
+      this.d = points.join(' ')
     }
   },
   watch: {
@@ -51,76 +79,16 @@ export default {
       this.drawPath(this.y, this.baseX, b)
     }
   },
-  data: () => ({
-    d: ''
-  }),
-  methods: {
-    drawPath (y, baseX, baseY) {
-      const points = ['M']
-      const midPos = this.origin === 0 ? this.width / 2 : this.origin
-      const scalePosToIndex = Math.floor(this.$cc.scale(midPos, this.baseX[0], this.baseX[1], 0, this.y.length))
-      const midIndex = scalePosToIndex < 0 ? 0 : scalePosToIndex > this.y.length ? this.y.length : scalePosToIndex
-      const xs = []
-      // x
-      let i1 = midIndex
-      let loop1 = true
-      while (loop1 && i1 < this.y.length) {
-        const x = this.$cc.scale(i1, 0, this.y.length, this.baseX[0], this.baseX[1])
-        if (x > this.width) {
-          loop1 = false
-        } else {
-          xs.push([
-            x,
-            this.y[i1]
-          ])
-          i1++
-        }
-      }
-      xs.reverse()
-      let i2 = midIndex - 1
-      let loop2 = true
-      while (loop2 && i2 >= 0) {
-        const x = this.$cc.scale(i2, 0, this.y.length, this.baseX[0], this.baseX[1])
-        if (x < 0) {
-          loop2 = false
-        } else {
-          xs.push([
-            x,
-            this.y[i2]
-          ])
-          i2--
-        }
-      }
-      // y
-      const minY = this.pinY ? this.$cc.getMin(xs, 1) : this.$cc.getMin(this.y)
-      const maxY = this.pinY ? this.$cc.getMax(xs, 1) : this.$cc.getMax(this.y)
-      for (let i = 0; i < xs.length; i++) {
-        const v = xs[i]
-        points.push(
-          v[0],
-          this.$cc.scale(v[1], minY, maxY, this.baseY[0], this.baseY[1])
-        )
-      }
-      // this.$emit('domainY', [minY, maxY])
-      this.d = points.join(' ')
-    }
-  },
   computed: {
-    // d () {
-    //   const points = ['M']
-    //   const minY = this.$cc.getMin(this.y)
-    //   const maxY = this.$cc.getMax(this.y)
-    //   console.time()
-    //   for (let i = 0; i < this.y.length; i++) {
-    //     const v = this.y[i]
-    //     points.push(
-    //       this.$cc.scale(i, 0, this.y.length, this.baseX[0], this.baseX[1]),
-    //       this.$cc.scale(v, minY, maxY, this.baseY[0], this.baseY[1])
-    //     )
-    //   }
-    //   console.timeEnd()
-    //   return points.join(' ')
-    // },
+    xDomain () {
+      if (this.domainX) return this.domainX
+      else if (this.x) return [this.$cc.getMin(this.x), this.$cc.getMax(this.x)]
+      return [0, this.y.length]
+    },
+    yDomain () {
+      if (this.domainY) return this.domainY
+      return [this.$cc.getMin(this.y), this.$cc.getMax(this.y)]
+    },
     width () {
       return this.$parent.containerWidth
     },
@@ -132,9 +100,6 @@ export default {
     },
     baseY () {
       return this.$parent.baseY
-    },
-    origin () {
-      return this.$parent.origin[0]
     }
   }
 }

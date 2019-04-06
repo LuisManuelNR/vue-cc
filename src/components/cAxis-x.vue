@@ -30,14 +30,18 @@ export default {
     strokeColor: {
       type: String,
       default: 'white'
-    }
+    },
+    dataType: String
+  },
+  methods: {
+
   },
   computed: {
     ticksList () {
       const minDomain = this.$cc.scale(0, this.base[0], this.base[1], this.domain[0], this.domain[1])
       const maxDomain = this.$cc.scale(this.width, this.base[0], this.base[1], this.domain[0], this.domain[1])
       const result = this.$cc.ticks(minDomain, maxDomain, +this.ticks).map(v => ({
-        val: v,
+        val: this.dataType === 'date' ? this.$cc.formatDate(v) :v,
         pos: this.$cc.scale(v, this.domain[0], this.domain[1], this.base[0], this.base[1])
       }))
       return result

@@ -75,6 +75,11 @@ const cc = {
   },
   getRandomColor: () => `hsla(${Math.floor(Math.random() * 360)}, 100%, 50%, 1)`,
 
-  ticks: (min, max, count) => d3Ticks(min, max, count)
+  ticks: (min, max, count) => d3Ticks(min, max, count),
+
+  formatDate: (date) => {
+    const d = new Date(date)
+    return `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}:${d.getMilliseconds()}`
+  }
 }
 export default cc
